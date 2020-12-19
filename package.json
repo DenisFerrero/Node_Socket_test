@@ -1,0 +1,29 @@
+{
+  "name": "node_socket_test",
+  "version": "1.0.0",
+  "description": "Project that'll test the use of SocketIO lib between front and backend using NodeJS",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DenisFerrero/Node_Socket_test.git"
+  },
+  "keywords": [
+    "NodeJS;SocketIO"
+  ],
+  "author": "Denis Ferrero",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DenisFerrero/Node_Socket_test/issues"
+  },
+  "homepage": "https://github.com/DenisFerrero/Node_Socket_test#readme"
+}
