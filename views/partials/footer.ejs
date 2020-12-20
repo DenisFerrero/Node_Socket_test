@@ -1,0 +1,16 @@
+<!-- Socket test -->
+<script type="text/javascript">
+
+  // Emit function
+  function emit_toc () {
+    socket.emit('toc');
+  }
+  // What to do when received tic event
+  socket.on('tic', function (data) {
+    document.getElementById('counter').innerHTML = data.counter;
+    console.log(`toc: ${data.counter}`);
+  })
+
+  // First trigger to fill the value
+  emit_toc();
+</script>

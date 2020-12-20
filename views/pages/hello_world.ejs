@@ -8,12 +8,23 @@
   <body>
     <!-- Rendering EJS variable (https://ejs.co/#docs) -->
     <div class="col-12 d-flex justify-content-center mt-2">
-      <div class="border border-primary rounded p-2">
-        You just submitted
-        <div class="display-4">
-          <%= name %>
+      <div class="col-6">
+        <div class="border border-primary rounded p-2 text-center">
+          You just submitted
+          <div class="display-4">
+            <%= name %>
+          </div>
+        </div>
+        <div class="border border-secondary rounded mt-2 p-2">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <button class="btn btn-secondary" onclick="emit_toc()">Toc</button>
+            </div>
+            <div id="counter" class="form-control"></div>
+          </div>
         </div>
       </div>
     </div>
+    <%- include('../partials/footer'); -%>
   </body>
 </html>
