@@ -1,5 +1,5 @@
 # Node_Socket_test
-Project that'll test the use of SocketIO lib between front and backend using NodeJS
+Project that'll test the use of SocketIO lib between front and backend using [NodeJS](https://nodejs.org/en/)
 
 # Used library
 - [ExpressJS](http://expressjs.com/)
@@ -7,8 +7,15 @@ Project that'll test the use of SocketIO lib between front and backend using Nod
 - [Bootstrap](https://getbootstrap.com/)
 - [SocketIO](https://socket.io/)
 # Initial settings
-Things to do after installing:
-- Run "npm install" to install the packages
+## Things to do after installing:
+- Install the packages requested the package.json
+```
+npm install
+```
+- Start the server
+```
+node server.js
+```
 
 # Feature
 - GET pages
