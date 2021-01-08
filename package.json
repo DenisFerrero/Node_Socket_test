@@ -10,6 +10,7 @@
     "express": "^4.17.1",
     "jquery": "^3.5.1",
     "path": "^0.12.7",
+    "pg": "^8.5.1",
     "sequelize": "^6.3.5",
     "socket.io": "^3.0.4",
     "socket.io-client": "^3.0.4"

@@ -8,7 +8,7 @@ const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 // Config file's information to connect to the db
 const config = require(__dirname + '/../config/config.json')[env];
-const db = {};
+const db = {}
 
 let sequelize;
 if (config.use_env_variable) {
@@ -43,7 +43,9 @@ Object.keys(db).forEach(modelName => {
 // - force: true, you'll create all table from zero (you'll lose all the database content)
 sequelize.sync({ alter: true }).then(() => {
   console.log(`Server connected to ${config.database} (${config.dialect} database type)`);
-});
+}).catch((err) => {
+  console.log(err);
+})
 
 
 db.sequelize = sequelize;

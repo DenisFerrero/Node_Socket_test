@@ -1,8 +1,10 @@
 // Import libraries
-const express = require ("express");
+const express = require("express");
 const bodyparser = require("body-parser");
 const path = require("path");
 const socket = require("socket.io");
+// Init the database by requiring it
+const database = require('./models/index');
 
 // Page management page
 var app = express();
@@ -11,7 +13,8 @@ var app = express();
 app.set('view engine', 'ejs');
 
 // Default action to parse data from request
-app.use(bodyparser.urlencoded({extended:false}));
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(express.json());
 
 // Serve and access node_modules as localhost:3000/modules (used to use library in frontend)
 app.use("/modules", express.static(path.join(__dirname, 'node_modules')));
