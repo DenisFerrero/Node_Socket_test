@@ -37,6 +37,15 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
+// Sync models with the database
+// By using:
+// - alter: true, you'll create just the new table (if it's added a column won't be updated)
+// - force: true, you'll create all table from zero (you'll lose all the database content)
+sequelize.sync({ alter: true }).then(() => {
+  console.log(`Server connected to ${config.database} (${config.dialect} database type)`);
+});
+
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
