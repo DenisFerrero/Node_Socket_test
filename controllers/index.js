@@ -7,6 +7,8 @@ var counter = 0;
 var app = express();
 
 module.exports = function (io) {
+  // Import pages
+  app.use('/document', require('./documents')()); // call this page as localhost:3000/document/
   // Get the page / as index.html
   app.get('/', function (req, res) {
     /* By setting the view engine as EJS,

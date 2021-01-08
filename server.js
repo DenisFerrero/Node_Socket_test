@@ -14,7 +14,7 @@ app.set('view engine', 'ejs');
 
 // Default action to parse data from request
 app.use(bodyparser.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(express.json({ "limit": "100mb" }));
 
 // Serve and access node_modules as localhost:3000/modules (used to use library in frontend)
 app.use("/modules", express.static(path.join(__dirname, 'node_modules')));
