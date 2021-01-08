@@ -103,5 +103,9 @@ dist
 # TernJS port file
 .tern-port
 
+# Exclude database
+database.sqlite3
+
+# Other files 
 .vscode/settings.json
 package-lock.json

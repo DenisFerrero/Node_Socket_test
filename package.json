@@ -14,10 +14,10 @@
     "md5": "^2.3.0",
     "moment": "^2.29.1",
     "path": "^0.12.7",
-    "pg": "^8.5.1",
     "sequelize": "^6.3.5",
     "socket.io": "^3.0.4",
-    "socket.io-client": "^3.0.4"
+    "socket.io-client": "^3.0.4",
+    "sqlite3": "^5.0.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
