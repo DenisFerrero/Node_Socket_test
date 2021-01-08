@@ -1,6 +1,6 @@
 // Import libraries
 const express = require("express");
-const bodyparser = require("body-parser");
+const bodyParser = require("body-parser");
 const path = require("path");
 const socket = require("socket.io");
 // Init the database by requiring it
@@ -13,8 +13,8 @@ var app = express();
 app.set('view engine', 'ejs');
 
 // Default action to parse data from request
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(express.json({ "limit": "100mb" }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb', parameterLimit: 1000000 }));
 
 // Serve and access node_modules as localhost:3000/modules (used to use library in frontend)
 app.use("/modules", express.static(path.join(__dirname, 'node_modules')));

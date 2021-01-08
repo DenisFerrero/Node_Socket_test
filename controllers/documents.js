@@ -31,15 +31,15 @@ module.exports = function () {
         // Post method
         .post((req, res) => {
             // Before post of the document check if the checksum is ok
-            let md5_file = md5(req.files.data);
-            if (md5_file == req.files.md5)
+            let md5_file = md5(req.files.document.data);
+            if (md5_file == req.files.document.md5)
                 DB.documents.create({ // You don't have to specify the id, sequelize'll do it for you
                     "name": req.body.name,
                     "extension": req.body.extension,
                     "description": req.body.description,
-                    "content": req.files.data, // The file you want to save
-                    "md5": req.files.md5, // MD5 is the checksum that identify if the file is corrupted
-                    "size": req.files.size,
+                    "content": req.files.document.data, // The file you want to save
+                    "md5": req.files.document.md5, // MD5 is the checksum that identify if the file is corrupted
+                    "size": req.files.document.size,
                 }).then((document) => {
                     res.send(document); // Send back the document after the post
                 });

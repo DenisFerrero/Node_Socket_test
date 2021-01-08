@@ -2,12 +2,13 @@
 <script type="text/javascript">
 
   // Emit function
-  function emit_toc () {
+  function emit_toc() {
     socket.emit('toc');
   }
   // What to do when received tic event
   socket.on('tic', function (data) {
-    document.getElementById('counter').innerHTML = data.counter;
+    let element = document.getElementById('counter')
+    if (element) element.innerHTML = data.counter;
     console.log(`toc: ${data.counter}`);
   })
 

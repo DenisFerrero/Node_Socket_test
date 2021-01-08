@@ -8,7 +8,7 @@ var app = express();
 
 module.exports = function (io) {
   // Import pages
-  app.use('/document', require('./documents')()); // call this page as localhost:3000/document/
+  app.use('/api/document', require('./documents')()); // call this page as localhost:3000/document/
   // Get the page / as index.html
   app.get('/', function (req, res) {
     /* By setting the view engine as EJS,
@@ -32,8 +32,14 @@ module.exports = function (io) {
       * (https://api.jquery.com/Jquery.ajax/)
       * if you do that the data'll be saved into req.query
       */
-      console.log(`Save to database: ${req.body.name}`);
+      console.log(`Name inserted: ${req.body.name}`);
       res.render('pages/hello_world.ejs', { name: req.body.name });
+    })
+
+  // Knockout page serving
+  app.route('/knockout_test')
+    .get(function (req, res) {
+      res.render('pages/document.ejs');
     })
 
   /*

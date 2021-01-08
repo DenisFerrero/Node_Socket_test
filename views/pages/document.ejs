@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Importing partials page using EJS -->
+    <%- include('../partials/header'); -%>
+    <title>Knockout example</title>
+
+
+    <!-- Knockout library -->
+    <script type="text/javascript" src="/modules/knockout/build/output/knockout-latest.js"></script>
+</head>
+
+<body>
+    <div class="row col-12 justify-content-center mt-2">
+        <div class="col-6 mb-2">
+            <h3 class="text-center"><a href="https://knockoutjs.com/" target="blank">KnockoutJS</a> framework example
+            </h3>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#document_modal">
+                New document
+            </button>
+        </div>
+        <!-- Show all documents, only if there're some -->
+        <!-- ko if: all_documents().length > 0 -->
+        <div class="col-10 border border-success">
+
+        </div>
+        <!-- /ko -->
+
+        <!-- Modal to add a new document -->
+        <div class="modal fade" id="document_modal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">New document</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    </div>
+                    <form class="border border-primary rounded p-2 text-center" enctype="multipart/form-data">
+                        <div class="modal-body">
+                            <!-- Dropzone for file -->
+                            <!-- Conditional view based on the observable variable file -->
+                            <!-- ko ifnot: file() -->
+                            <div class="d-flex col-12 border rounded bg-light mb-2" style="height: 200px;"
+                                data-bind="dropUpload: file">
+                                <h3 class="col-sm-12 my-auto text-center">Drop file here</h3>
+                            </div>
+                            <!-- /ko -->
+                            <!-- ko if: file() -->
+                            <!-- Field to fill to complete the request -->
+                            <!-- Name that you want to use for your file -->
+                            <div class="input-group mb-1">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Name</span>
+                                </div>
+                                <input class="form-control" data-bind="textinput: name">
+                            </div>
+                            <!-- Description that you want to use for your file -->
+                            <div class="input-group mb-1">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Description</span>
+                                </div>
+                                <textarea class="form-control" data-bind="value: description"></textarea>
+                            </div>
+
+                            <!-- /ko -->
+                        </div>
+                        <div class="modal-footer">
+                            <!-- Submit -->
+                            <button class="btn btn-info" data-bind="click: function () {
+                            clear_input();
+                        }">Reset</button> <!-- Reset button that set all value empty -->
+                            <button type="submit" class="btn btn-primary" data-dismiss="modal" data-bind="click: function (e) {
+                            e.preventDefault();
+                            save_document();
+                            clear_input();
+                        }, enable: (name().length > 0 && file())">Submit</button>
+                            <!-- Submit button enabled only on name not empty and file inserted -->
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        // Knockout dropUpload custom-binding (http://jsfiddle.net/3LT9d/)
+        function noopHandler(evt) {
+            evt.preventDefault();
+            return false;
+        }
+        ko.bindingHandlers.dropUpload = {
+            init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+                element.addEventListener('dragenter', noopHandler, false);
+                element.addEventListener('dragover', noopHandler, false);
+
+                element.addEventListener('drop', function (evt) {
+                    evt.preventDefault();
+
+                    var value = valueAccessor();
+                    value(evt.dataTransfer.files[0]);
+                }, false);
+            }
+        };
+
+        // KnockoutJS example VM
+        var ExampleVM = function () {
+            var self = this;
+
+            self.all_documents = ko.observableArray();
+
+            self.file = ko.observable(null);
+            self.name = ko.observable("");
+            self.description = ko.observable("");
+
+            // Set all input empty
+            self.clear_input = function () {
+                self.file(null);
+                self.name("");
+                self.description("");
+            }
+
+            // Save a documents in the database
+            self.save_document = function () {
+                // Parsing data before send to the server
+                let data = new FormData();
+                data.append('name', self.name());
+                data.append('description', self.description());
+                data.append('extension', self.file().name.split('.')[self.file().name.split('.').length - 1]);
+                data.append('document', self.file());
+
+                // Request
+                $.ajax({
+                    method: 'POST',
+                    url: 'api/document',
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    dataType: "json",
+                    success: function (data) {
+                        self.all_documents.push(data);
+                    }
+                })
+            }
+
+            // Request to GET all documents in the database
+            self.get_all_documents = function () {
+                $.ajax({
+                    method: 'GET',
+                    url: 'api/document',
+                    dataType: 'json',
+                    success: function (data) {
+                        self.all_documents.removeAll();
+                        data.forEach(document => self.all_documents.push(document));
+                    }
+                })
+            }
+        }
+
+        var vm = new ExampleVM();
+
+        ko.applyBindings(vm);
+
+        // Get all documents on loading
+        vm.get_all_documents();
+
+    </script>
+    <%- include('../partials/footer'); -%>
+</body>
+
+</html>
