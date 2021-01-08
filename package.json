@@ -10,12 +10,22 @@
     "express": "^4.17.1",
     "jquery": "^3.5.1",
     "path": "^0.12.7",
+    "sequelize": "^6.3.5",
     "socket.io": "^3.0.4",
     "socket.io-client": "^3.0.4"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  },
   "scripts": {
+    "watch": "nodemon server.js",
     "start": "node server.js"
+  },
+  "nodemondConfig": {
+    "ignore": [
+      ".git",
+      "node_modules/**/node_modules"
+    ]
   },
   "repository": {
     "type": "git",
