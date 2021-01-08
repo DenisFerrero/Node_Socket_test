@@ -1,6 +1,6 @@
 # Node_Socket_test
 
-Project that'll test the use of SocketIO lib between front and backend using [NodeJS](https://nodejs.org/en/) and the connection to a Database using [Sequelize](https://sequelize.org/)
+Project that'll test the use of SocketIO lib between front and backend using [NodeJS](https://nodejs.org/en/) and the connection to a Database using [Sequelize](https://sequelize.org/) to [SQLite](https://www.sqlite.org/index.html)
 
 # Used library
 
@@ -9,7 +9,9 @@ Project that'll test the use of SocketIO lib between front and backend using [No
 - [Bootstrap](https://getbootstrap.com/)
 - [SocketIO](https://socket.io/)
 - [SequelizeJS](https://sequelize.org/)
+
 ## Frameworks
+
 - [KnockoutJS](https://knockoutjs.com/)
 
 # Initial settings
@@ -45,3 +47,10 @@ nodemon server.js
 - EJS templating
 - Database connection
 - Knockout as Framework
+
+# Website route
+
+localhost:3200  
+├── /  
+├── /hello  
+└── /knockout_test

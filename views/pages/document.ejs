@@ -35,7 +35,7 @@
                         <h5 class="modal-title">New document</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     </div>
-                    <form class="border border-primary rounded p-2 text-center" enctype="multipart/form-data">
+                    <form class="text-center" enctype="multipart/form-data">
                         <div class="modal-body">
                             <!-- Dropzone for file -->
                             <!-- Conditional view based on the observable variable file -->
@@ -70,7 +70,6 @@
                             clear_input();
                         }">Reset</button> <!-- Reset button that set all value empty -->
                             <button type="submit" class="btn btn-primary" data-dismiss="modal" data-bind="click: function (e) {
-                            e.preventDefault();
                             save_document();
                             clear_input();
                         }, enable: (name().length > 0 && file())">Submit</button>

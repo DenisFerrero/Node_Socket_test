@@ -2,7 +2,7 @@
   "development": {
     "dialect": "sqlite",
     "storage": "./database.sqlite3",
-    "logging": "false"
+    "logging": false
   },
   "test": {
     "dialect": "sqlite",
