@@ -22,8 +22,35 @@
         </div>
         <!-- Show all documents, only if there're some -->
         <!-- ko if: all_documents().length > 0 -->
-        <div class="col-10 border border-success">
-
+        <div class="col-10 list-group">
+            <!-- ko foreach: all_documents -->
+            <div class="list-group-item d-flex col-12">
+                <div class="col-2" data-bind="text: name, style: { 'text-danger': is_corrupted }"></div>
+                <div class="col-3" data-bind="text: description"></div>
+                <div class="col-1" data-bind="text: extension"></div>
+                <div class="col-3" data-bind="text: md5" title="md5"></div>
+                <div class="col-3">
+                    <div class="btn-group">
+                        <!-- ko if: is_corrupted -->
+                        <button class="btn btn-success" disabled
+                            title="The file is corrupted! Cannot download it!">Download</button>
+                        <!-- /ko -->
+                        <!-- ko ifnot: is_corrupted -->
+                        <a class="btn btn-success"
+                            data-bind="attr: { href: `/api/document/load_content/${id}`, download: `${name}.${extension}` }">
+                            Download
+                        </a>
+                        <!-- /ko -->
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#document_modal" data-bind="click: function () {
+                            $root.id(id);
+                            $root.name(name);
+                            $root.description(description);
+                        }">Modifica</button>
+                        <button class="btn btn-danger">Elimina</button>
+                    </div>
+                </div>
+            </div>
+            <!-- /ko -->
         </div>
         <!-- /ko -->
 
@@ -32,20 +59,21 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">New document</h5>
+                        <h5 class="modal-title"
+                            data-bind="text: id() ? `Edit document ${name()}` : `New document ${name()}`"></h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     </div>
                     <form class="text-center" enctype="multipart/form-data">
                         <div class="modal-body">
                             <!-- Dropzone for file -->
                             <!-- Conditional view based on the observable variable file -->
-                            <!-- ko ifnot: file() -->
+                            <!-- ko ifnot: file() || id() -->
                             <div class="d-flex col-12 border rounded bg-light mb-2" style="height: 200px;"
                                 data-bind="dropUpload: file">
                                 <h3 class="col-sm-12 my-auto text-center">Drop file here</h3>
                             </div>
                             <!-- /ko -->
-                            <!-- ko if: file() -->
+                            <!-- ko if: file() || id() -->
                             <!-- Field to fill to complete the request -->
                             <!-- Name that you want to use for your file -->
                             <div class="input-group mb-1">
@@ -69,10 +97,11 @@
                             <button class="btn btn-info" data-bind="click: function () {
                             clear_input();
                         }">Reset</button> <!-- Reset button that set all value empty -->
-                            <button type="submit" class="btn btn-primary" data-dismiss="modal" data-bind="click: function (e) {
+                            <button type="submit" class="btn btn-primary" data-bind="click: function (e) {
                             save_document();
                             clear_input();
-                        }, enable: (name().length > 0 && file())">Submit</button>
+                            $('#document_modal').modal('toggle');
+                        }, enable: (name().length > 0 && (file() || id()))">Submit</button>
                             <!-- Submit button enabled only on name not empty and file inserted -->
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         </div>
@@ -109,6 +138,7 @@
 
             self.all_documents = ko.observableArray();
 
+            self.id = ko.observable(null);
             self.file = ko.observable(null);
             self.name = ko.observable("");
             self.description = ko.observable("");
@@ -122,36 +152,52 @@
 
             // Save a documents in the database
             self.save_document = function () {
-                // Parsing data before send to the server
-                let data = new FormData();
-                data.append('name', self.name());
-                data.append('description', self.description());
-                data.append('extension', self.file().name.split('.')[self.file().name.split('.').length - 1]);
-                data.append('document', self.file());
+                if (self.id()) {
+                    // PUT of th
+                    $.ajax({
+                        method: 'PUT',
+                        url: `api/document/${self.id()}`,
+                        data: {
+                            name: self.name(),
+                            description: self.description()
+                        }, dataType: 'json',
+                        success: function (data) {
+                            self.get_all_documents();
+                        }
+                    })
+                } else {
+                    // Parsing data before send to the server
+                    let data = new FormData();
+                    data.append('name', self.name());
+                    data.append('description', self.description());
+                    data.append('extension', self.file().name.split('.')[self.file().name.split('.').length - 1]);
+                    data.append('document', self.file());
 
-                // Request
-                $.ajax({
-                    method: 'POST',
-                    url: 'api/document',
-                    data: data,
-                    processData: false,
-                    contentType: false,
-                    dataType: "json",
-                    success: function (data) {
-                        self.all_documents.push(data);
-                    }
-                })
+                    $.ajax({
+                        method: 'POST',
+                        url: 'api/document/',
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        dataType: "json",
+                        success: function (data) {
+                            self.all_documents.push(data);
+                        }
+                    })
+                }
             }
 
             // Request to GET all documents in the database
             self.get_all_documents = function () {
                 $.ajax({
                     method: 'GET',
-                    url: 'api/document',
+                    url: 'api/document/',
                     dataType: 'json',
                     success: function (data) {
                         self.all_documents.removeAll();
-                        data.forEach(document => self.all_documents.push(document));
+                        data.forEach(function (document) {
+                            self.all_documents.push(document);
+                        });
                     }
                 })
             }

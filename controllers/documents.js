@@ -24,10 +24,12 @@ module.exports = function () {
                 // Check if documents are corrupted, if corrupted they'll be shown an error on frontend
                 let check_corrupted_documents = [];
                 documents.forEach(function (document) {
-                    document['is_corrupted'] = !(md5(document.content) == document.md5);
+                    document.dataValues['is_corrupted'] = !(md5(document.content) == document.md5);
                     check_corrupted_documents.push(document);
+                    // Don't send this data, they make the request to heavy
+                    document.content = null;
                 });
-                res.send(documents);
+                res.send(check_corrupted_documents);
             });
             // the same thing can be done using query:
             // DB.sequelize.query(`SELECT * FROM documents`).then((documents) => {
@@ -48,6 +50,8 @@ module.exports = function () {
                     "md5": req.files.document.md5, // MD5 is the checksum that identify if the file is corrupted
                     "size": req.files.document.size,
                 }).then((document) => {
+                    // Don't send content informations
+                    document.content = null;
                     res.send(document); // Send back the document after the post
                 });
             // the same thing can be done using query (by using query you'have to specify the id <-- need to be changed each time)
@@ -60,6 +64,23 @@ module.exports = function () {
                 console.log(`Cannot save the document! ${req.files.name} is corrupted!`);
         })
 
+    // Thanks to this it's possible retrieve the content data
+    router.get('/load_content/:id', function (req, res) {
+        // If it's not present id
+        if (!req.params.id)
+            return res.send(400);
+        // GET the data
+        DB.documents.findOne({
+            where: { id: req.params.id },
+            paranoid: false
+        }).then(function (file) {
+            // Parse the response type to the file type
+            res.type(file.extension.replace(".", ""));
+            // Send only the content
+            res.send(file.content);
+        });
+    });
+
     router.route('/:id')
         // Get method
         .get((req, res) => {
@@ -68,11 +89,16 @@ module.exports = function () {
             DB.documents.findOne({
                 where: { id: req.params.id }
             }).then((document) => {
-                document['is_corrupted'] = !(md5(document.content) == document.md5);
+                // Check if the content is corrupted
+                document.dataValues['is_corrupted'] = !(md5(document.content) == document.md5);
+                // Don't send the content it's to heavy
+                document.content = null;
+                // Send the document
                 res.send(document);
             })
             // the same thing can be done using query:
             // DB.sequelize.query(`SELECT * FROM documents WHERE id = ${req.params.id}`).then((document) => {
+            //     document.content = null;
             //     res.send(document);
             // })
 
@@ -83,17 +109,25 @@ module.exports = function () {
         // Put method
         .put((req, res) => {
             DB.documents.update({
-                "name": req.body.name // Values to update
+                "name": req.body.name, // Values to update
+                "description": req.body.description
             }, {
                 where: {
                     id: req.params.id // Update name only to record that has this id
                 }
-            }).then((document) => { res.send(document); });
+            }).then((document) => {
+                // Don't send content it's to heavy
+                document.content = null;
+                res.send(document);
+            });
             // the same thing can be done using query:
             // DB.sequelize.query(`UPDATE documents SET name = ${req.body.name} WHERE id = ${req.params.id}`)
             //     .then(() => {
             //         DB.sequelize.query(`SELECT * FROM document WHERE id = ${req.params.id}`)
-            //         .then((document) => { res.send(document) });
+            //         .then((document) => {
+            //                  document.content = null;
+            //                  res.send(document);
+            //              });
             //     })
         })
         // Delete method
