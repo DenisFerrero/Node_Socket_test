@@ -46,7 +46,8 @@
                             $root.name(name);
                             $root.description(description);
                         }">Modifica</button>
-                        <button class="btn btn-danger">Elimina</button>
+                        <button class="btn btn-danger"
+                            data-bind="click: function () { if(confirm(`Are you sure to delete ${name}?`)) $root.delete_document(id); }">Elimina</button>
                     </div>
                 </div>
             </div>
@@ -153,7 +154,7 @@
             // Save a documents in the database
             self.save_document = function () {
                 if (self.id()) {
-                    // PUT of th
+                    // PUT of the document
                     $.ajax({
                         method: 'PUT',
                         url: `api/document/${self.id()}`,
@@ -181,10 +182,22 @@
                         contentType: false,
                         dataType: "json",
                         success: function (data) {
-                            self.all_documents.push(data);
+                            self.get_all_documents();
                         }
                     })
                 }
+            }
+
+            // Delete document
+            self.delete_document = function (id) {
+                $.ajax({
+                    method: 'DELETE',
+                    url: `/api/document/${id}`,
+                    success: function (data) {
+                        alert(data);
+                        self.get_all_documents();
+                    }
+                })
             }
 
             // Request to GET all documents in the database
