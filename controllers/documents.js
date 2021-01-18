@@ -21,11 +21,18 @@ module.exports = function () {
         .get((req, res) => {
             // Find all documents and after find them (.then) return the result (res)
             DB.documents.findAll().then((documents) => {
+                // Check if documents are corrupted, if corrupted they'll be shown an error on frontend
+                let check_corrupted_documents = [];
+                documents.forEach(function (document) {
+                    document['is_corrupted'] = !(md5(document.content) == document.md5);
+                    check_corrupted_documents.push(document);
+                });
                 res.send(documents);
             });
             // the same thing can be done using query:
             // DB.sequelize.query(`SELECT * FROM documents`).then((documents) => {
-            //     res.send(document)
+            //      ...
+            //      res.send(document);
             // })
         })
         // Post method
@@ -61,6 +68,7 @@ module.exports = function () {
             DB.documents.findOne({
                 where: { id: req.params.id }
             }).then((document) => {
+                document['is_corrupted'] = !(md5(document.content) == document.md5);
                 res.send(document);
             })
             // the same thing can be done using query:
